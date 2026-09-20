@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="ATTENDIX - Smart RFID Attendance System"
+    >
+
+    <title>ATTENDIX – Login</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="login-wrapper">
+
+        <section class="login-card" aria-labelledby="login-title">
+
+            <!-- ================================
+                 LOGO / BRAND
+            ================================= -->
+            <div class="login-logo">
+
+                <div class="logo-icon" aria-hidden="true">
+                    <svg
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect
+                            width="36"
+                            height="36"
+                            rx="8"
+                            fill="#1769E0"
+                        />
+
+                        <path
+                            d="M10 18C10 13.582 13.582 10 18 10C22.418 10 26 13.582 26 18C26 22.418 22.418 26 18 26"
+                            stroke="white"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M14 18L17 21L22 15"
+                            stroke="white"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </div>
+
+                <h1 id="login-title">ATTENDIX</h1>
+
+                <p>Smart Attendance System</p>
+
+            </div>
+
+
+            <!-- ================================
+                 LOGIN FORM
+            ================================= -->
+            <div class="login-form-box">
+
+                <h2>Welcome Back</h2>
+
+                <p class="login-subtitle">
+                    Sign in to your account to continue
+                </p>
+
+
+                <!-- Firebase / Login Error -->
+                <div
+                    id="login-error"
+                    class="login-error"
+                    role="alert"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+
+                <form id="loginForm" novalidate>
+
+                    <!-- ROLE -->
+                    <div class="form-group">
+
+                        <label for="role">
+                            Login As
+                        </label>
+
+                        <select
+                            id="role"
+                            name="role"
+                            required
+                            autocomplete="organization-title"
+                        >
+                            <option value="" selected disabled>
+                                Select Role
+                            </option>
+
+                            <option value="admin">
+                                Admin
+                            </option>
+
+                            <option value="teacher">
+                                Teacher
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="username"
+                            inputmode="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="password-wrap">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+
+                                <svg
+                                    id="eye-icon"
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="3"
+                                    />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+                    <button
+                        type="submit"
+                        class="btn-login"
+                        id="loginBtn"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Firebase + Login Logic -->
+    <script
+        type="module"
+        src="js/app.js"
+    ></script>
+
+</body>
+</html>
