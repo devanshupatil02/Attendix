@@ -1,18 +1,20 @@
-// ============================================
-// ATTENDIX - Firebase Authentication
-// ============================================
+// ============================================================
+// ATTENDIX - FIREBASE LOGIN
+// ADMIN / TEACHER / STUDENT
+// ============================================================
 
-// Firebase Core
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-// Firebase Authentication
 import {
     getAuth,
     signInWithEmailAndPassword,
-    signOut
+    signOut,
+    setPersistence,
+    browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-// Firebase Firestore
 import {
     getFirestore,
     doc,
@@ -20,24 +22,25 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
-// ============================================
-// FIREBASE CONFIGURATION
-// ============================================
+// ============================================================
+// FIREBASE CONFIG
+// ============================================================
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyAxVUvIhjrBhmR_0uyXJyQmD00eQ9mgq9M",
-    authDomain: "attendix-rfid-attendance.firebaseapp.com",
-    projectId: "attendix-rfid-attendance",
-    storageBucket: "attendix-rfid-attendance.firebasestorage.app",
-    messagingSenderId: "1038365817716",
-    appId: "1:1038365817716:web:a1160a5265dfb417da8a21",
-    measurementId: "G-ZYCH6VZHD0"
+  apiKey: "AIzaSyAxVUvIhjrBhmR_0uyXJyQmD00eQ9mgq9M",
+  authDomain: "attendix-rfid-attendance.firebaseapp.com",
+  projectId: "attendix-rfid-attendance",
+  storageBucket: "attendix-rfid-attendance.firebasestorage.app",
+  messagingSenderId: "1038365817716",
+  appId: "1:1038365817716:web:a1160a5265dfb417da8a21",
+  measurementId: "G-ZYCH6VZHD0"
 };
 
 
-// ============================================
-// INITIALIZE FIREBASE
-// ============================================
+// ============================================================
+// INITIALIZE
+// ============================================================
 
 const app = initializeApp(firebaseConfig);
 
@@ -46,106 +49,120 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// ============================================
-// DOM ELEMENTS
-// ============================================
+// ============================================================
+// ELEMENTS
+// ============================================================
 
-const loginForm = document.getElementById("loginForm");
-const roleInput = document.getElementById("role");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
+const loginForm =
+    document.getElementById("loginForm");
 
-const loginButton = document.getElementById("loginBtn");
-const loginError = document.getElementById("login-error");
+const roleInput =
+    document.getElementById("role");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const loginButton =
+    document.getElementById("loginBtn");
+
+const loginError =
+    document.getElementById("login-error");
 
 const togglePasswordButton =
     document.getElementById("togglePassword");
 
 
-// ============================================
-// SHOW ERROR MESSAGE
-// ============================================
+// ============================================================
+// ERROR
+// ============================================================
 
 function showError(message) {
 
     if (!loginError) return;
 
     loginError.textContent = message;
+
     loginError.hidden = false;
 }
 
-
-// ============================================
-// HIDE ERROR MESSAGE
-// ============================================
 
 function hideError() {
 
     if (!loginError) return;
 
     loginError.textContent = "";
+
     loginError.hidden = true;
 }
 
 
-// ============================================
-// LOGIN BUTTON LOADING STATE
-// ============================================
+// ============================================================
+// LOADING
+// ============================================================
 
-function setLoginLoading(isLoading) {
+function setLoading(value) {
 
     if (!loginButton) return;
 
-    loginButton.disabled = isLoading;
+    loginButton.disabled = value;
 
-    if (isLoading) {
-        loginButton.textContent = "Signing In...";
-    } else {
-        loginButton.textContent = "Sign In";
-    }
+    loginButton.textContent =
+        value
+            ? "Signing In..."
+            : "Sign In";
 }
 
 
-// ============================================
-// PASSWORD VISIBILITY
-// ============================================
+// ============================================================
+// PASSWORD TOGGLE
+// ============================================================
 
 if (togglePasswordButton) {
 
-    togglePasswordButton.addEventListener("click", () => {
+    togglePasswordButton.addEventListener(
+        "click",
+        () => {
 
-        const isPassword =
-            passwordInput.type === "password";
+            const passwordVisible =
+                passwordInput.type === "text";
 
-        passwordInput.type =
-            isPassword ? "text" : "password";
+            passwordInput.type =
+                passwordVisible
+                    ? "password"
+                    : "text";
 
-        togglePasswordButton.setAttribute(
-            "aria-label",
-            isPassword ? "Hide password" : "Show password"
-        );
-
-        togglePasswordButton.setAttribute(
-            "aria-pressed",
-            String(isPassword)
-        );
-    });
+        }
+    );
 }
 
 
-// ============================================
-// FIREBASE ERROR HANDLER
-// ============================================
+// ============================================================
+// ERROR MESSAGE
+// ============================================================
 
-function getLoginErrorMessage(errorCode) {
+function getErrorMessage(error) {
 
-    switch (errorCode) {
+    console.error(
+        "Firebase error code:",
+        error.code
+    );
+
+    console.error(
+        "Firebase error message:",
+        error.message
+    );
+
+
+    switch (error.code) {
 
         case "auth/invalid-email":
-            return "Please enter a valid email address.";
+            return "Invalid email address.";
 
         case "auth/user-not-found":
-            return "No account was found with this email.";
+            return "Student account does not exist in Firebase Authentication.";
 
         case "auth/wrong-password":
             return "Incorrect password.";
@@ -157,195 +174,307 @@ function getLoginErrorMessage(errorCode) {
             return "This account has been disabled.";
 
         case "auth/too-many-requests":
-            return "Too many login attempts. Please try again later.";
+            return "Too many attempts. Try again later.";
 
         case "auth/network-request-failed":
-            return "Network error. Please check your internet connection.";
+            return "Network error. Check your internet.";
 
         default:
-            return "Login failed. Please try again.";
+            return "Login failed: " + (
+                error.code || "Unknown error"
+            );
     }
 }
 
 
-// ============================================
-// LOGIN FORM
-// ============================================
+// ============================================================
+// LOGIN
+// ============================================================
 
 if (loginForm) {
 
-    loginForm.addEventListener("submit", async (event) => {
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        hideError();
+            hideError();
 
-        const selectedRole =
-            roleInput.value.trim().toLowerCase();
+            const selectedRole =
+                String(roleInput.value)
+                    .trim()
+                    .toLowerCase();
 
-        const email =
-            emailInput.value.trim();
+            const email =
+                String(emailInput.value)
+                    .trim();
 
-        const password =
-            passwordInput.value;
-
-
-        // ----------------------------------------
-        // BASIC VALIDATION
-        // ----------------------------------------
-
-        if (!selectedRole) {
-            showError("Please select your role.");
-            roleInput.focus();
-            return;
-        }
-
-        if (selectedRole !== "admin" && selectedRole !== "teacher") {
-            showError("Invalid role selected.");
-            return;
-        }
-
-        if (!email) {
-            showError("Please enter your email address.");
-            emailInput.focus();
-            return;
-        }
-
-        if (!password) {
-            showError("Please enter your password.");
-            passwordInput.focus();
-            return;
-        }
+            const password =
+                passwordInput.value;
 
 
-        // ----------------------------------------
-        // START LOGIN
-        // ----------------------------------------
+            // ------------------------------------------------
+            // VALIDATION
+            // ------------------------------------------------
 
-        setLoginLoading(true);
-
-        try {
-
-            // Firebase Authentication
-            const userCredential =
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-            const user =
-                userCredential.user;
-
-
-            // ----------------------------------------
-            // GET USER PROFILE FROM FIRESTORE
-            // ----------------------------------------
-
-            const userRef =
-                doc(db, "users", user.uid);
-
-            const userSnapshot =
-                await getDoc(userRef);
-
-
-            // User document does not exist
-            if (!userSnapshot.exists()) {
-
-                await signOut(auth);
+            if (!selectedRole) {
 
                 showError(
-                    "Your account is not configured in ATTENDIX. Please contact the administrator."
+                    "Please select your role."
                 );
 
                 return;
             }
 
 
-            // ----------------------------------------
-            // USER DATA
-            // ----------------------------------------
+            if (!email) {
 
-            const userData =
-                userSnapshot.data();
+                showError(
+                    "Please enter your email."
+                );
 
-            const firestoreRole =
-                String(userData.role || "")
+                return;
+            }
+
+
+            if (!password) {
+
+                showError(
+                    "Please enter your password."
+                );
+
+                return;
+            }
+
+
+            setLoading(true);
+
+
+            try {
+
+                // ------------------------------------------------
+                // PERSIST LOGIN
+                // ------------------------------------------------
+
+                await setPersistence(
+                    auth,
+                    browserLocalPersistence
+                );
+
+
+                // ------------------------------------------------
+                // FIREBASE AUTH LOGIN
+                // ------------------------------------------------
+
+                const credential =
+                    await signInWithEmailAndPassword(
+                        auth,
+                        email,
+                        password
+                    );
+
+
+                const user =
+                    credential.user;
+
+
+                console.log(
+                    "LOGIN SUCCESS"
+                );
+
+                console.log(
+                    "Email:",
+                    user.email
+                );
+
+                console.log(
+                    "UID:",
+                    user.uid
+                );
+
+
+                // ------------------------------------------------
+                // GET USER PROFILE
+                // ------------------------------------------------
+
+                const userRef =
+                    doc(
+                        db,
+                        "users",
+                        user.uid
+                    );
+
+
+                const userSnap =
+                    await getDoc(userRef);
+
+
+                if (!userSnap.exists()) {
+
+                    await signOut(auth);
+
+                    showError(
+                        "Firebase login succeeded, but users profile was not found."
+                    );
+
+                    return;
+                }
+
+
+                const userData =
+                    userSnap.data();
+
+
+                console.log(
+                    "Firestore user:",
+                    userData
+                );
+
+
+                // ------------------------------------------------
+                // ROLE
+                // ------------------------------------------------
+
+                const firestoreRole =
+                    String(
+                        userData.role || ""
+                    )
                     .trim()
                     .toLowerCase();
 
 
-            // ----------------------------------------
-            // CHECK USER ROLE
-            // ----------------------------------------
+                console.log(
+                    "Role:",
+                    firestoreRole
+                );
 
-            if (!firestoreRole) {
+
+                if (!firestoreRole) {
+
+                    await signOut(auth);
+
+                    showError(
+                        "No role assigned to this account."
+                    );
+
+                    return;
+                }
+
+
+                // ------------------------------------------------
+                // ROLE MATCH
+                // ------------------------------------------------
+
+                if (
+                    selectedRole !==
+                    firestoreRole
+                ) {
+
+                    await signOut(auth);
+
+                    showError(
+                        `This account is registered as ${firestoreRole}.`
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // ADMIN
+                // =================================================
+
+                if (
+                    firestoreRole === "admin"
+                ) {
+
+                    window.location.replace(
+                        "pages/admin.html"
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // TEACHER
+                // =================================================
+
+                if (
+                    firestoreRole === "teacher"
+                ) {
+
+                    window.location.replace(
+                        "pages/teacher.html"
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // STUDENT
+                // =================================================
+
+                if (
+                    firestoreRole === "student"
+                ) {
+
+                    // Make sure student profile is linked
+
+                    if (!userData.student_id) {
+
+                        await signOut(auth);
+
+                        showError(
+                            "Student ID is missing from your profile."
+                        );
+
+                        return;
+                    }
+
+
+                    console.log(
+                        "Student ID:",
+                        userData.student_id
+                    );
+
+
+                    window.location.replace(
+                        "pages/student-dashboard.html"
+                    );
+
+                    return;
+                }
+
+
+                // ------------------------------------------------
+                // INVALID ROLE
+                // ------------------------------------------------
 
                 await signOut(auth);
 
                 showError(
-                    "Your account does not have a role assigned."
+                    "Invalid role. Contact administrator."
                 );
 
-                return;
-            }
+            } catch (error) {
 
-
-            if (firestoreRole !== selectedRole) {
-
-                await signOut(auth);
+                console.error(
+                    "ATTENDIX LOGIN ERROR:",
+                    error
+                );
 
                 showError(
-                    `This account is registered as ${firestoreRole}, not ${selectedRole}.`
+                    getErrorMessage(error)
                 );
 
-                return;
+            } finally {
+
+                setLoading(false);
             }
 
-
-            // ----------------------------------------
-            // LOGIN SUCCESS
-            // ----------------------------------------
-
-            if (firestoreRole === "admin") {
-
-                window.location.href =
-                    "pages/admin.html";
-
-                return;
-            }
-
-
-            if (firestoreRole === "teacher") {
-
-                window.location.href =
-                    "pages/teacher.html";
-
-                return;
-            }
-
-
-            // ----------------------------------------
-            // UNKNOWN ROLE
-            // ----------------------------------------
-
-            await signOut(auth);
-
-            showError(
-                "Your account has an invalid role. Please contact the administrator."
-            );
-
-        } catch (error) {
-
-            console.error("ATTENDIX Login Error:", error);
-
-            showError(
-                getLoginErrorMessage(error.code)
-            );
-
-        } finally {
-
-            setLoginLoading(false);
         }
-    });
+    );
 }
