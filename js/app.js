@@ -30,14 +30,15 @@ import {
 // FIREBASE CONFIG
 // ============================================================
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyAxVUihj9BhmR_0uyXJyQmD00eQ9mgq9M",
-    authDomain: "attendix-rfid-attendance.firebaseapp.com",
-    projectId: "attendix-rfid-attendance",
-    storageBucket: "attendix-rfid-attendance.firebasestorage.app",
-    messagingSenderId: "1038365817716",
-    appId: "1:1038365817716:web:a1160a5265dfb417da8a21",
-    measurementId: "G-ZYCH6VZHD0"
+  apiKey: "AIzaSyAxVUvIhjrBhmR_0uyXJyQmD00eQ9mgq9M",
+  authDomain: "attendix-rfid-attendance.firebaseapp.com",
+  projectId: "attendix-rfid-attendance",
+  storageBucket: "attendix-rfid-attendance.firebasestorage.app",
+  messagingSenderId: "1038365817716",
+  appId: "1:1038365817716:web:a1160a5265dfb417da8a21",
+  measurementId: "G-ZYCH6VZHD0"
 };
 
 
