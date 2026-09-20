@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>ATTENDIX - Smart Attendance System</title>
 
+    <!-- ATTENDIX LOGIN CSS -->
     <link rel="stylesheet" href="css/style.css">
+
 </head>
+
 
 <body>
 
-    <!-- =========================================
+
+    <!-- ==================================================
          LOGIN CONTAINER
-    ========================================== -->
+    =================================================== -->
 
     <div class="login-container">
 
+
         <div class="login-card">
 
-            <!-- LOGO / BRAND -->
+
+            <!-- ==================================================
+                 BRAND
+            =================================================== -->
 
             <div class="brand">
 
@@ -28,19 +41,30 @@
                     A
                 </div>
 
-                <div>
-                    <h1>ATTENDIX</h1>
-                    <p>Smart Attendance System</p>
+                <div class="brand-text">
+
+                    <h1>
+                        ATTENDIX
+                    </h1>
+
+                    <p>
+                        Smart Attendance System
+                    </p>
+
                 </div>
 
             </div>
 
 
-            <!-- LOGIN TITLE -->
+            <!-- ==================================================
+                 LOGIN HEADER
+            =================================================== -->
 
             <div class="login-header">
 
-                <h2>Welcome Back</h2>
+                <h2>
+                    Welcome Back
+                </h2>
 
                 <p>
                     Sign in to continue to your dashboard
@@ -49,12 +73,16 @@
             </div>
 
 
-            <!-- LOGIN FORM -->
+            <!-- ==================================================
+                 LOGIN FORM
+            =================================================== -->
 
             <form id="loginForm">
 
 
-                <!-- ROLE -->
+                <!-- ==================================================
+                     ROLE
+                =================================================== -->
 
                 <div class="form-group">
 
@@ -89,7 +117,9 @@
                 </div>
 
 
-                <!-- EMAIL -->
+                <!-- ==================================================
+                     EMAIL
+                =================================================== -->
 
                 <div class="form-group">
 
@@ -109,13 +139,16 @@
                 </div>
 
 
-                <!-- PASSWORD -->
+                <!-- ==================================================
+                     PASSWORD
+                =================================================== -->
 
                 <div class="form-group">
 
                     <label for="password">
                         Password
                     </label>
+
 
                     <div class="password-wrapper">
 
@@ -127,6 +160,7 @@
                             autocomplete="current-password"
                             required
                         >
+
 
                         <button
                             type="button"
@@ -142,7 +176,9 @@
                 </div>
 
 
-                <!-- ERROR MESSAGE -->
+                <!-- ==================================================
+                     ERROR MESSAGE
+                =================================================== -->
 
                 <div
                     id="errorMessage"
@@ -151,7 +187,9 @@
                 ></div>
 
 
-                <!-- LOGIN BUTTON -->
+                <!-- ==================================================
+                     LOGIN BUTTON
+                =================================================== -->
 
                 <button
                     type="submit"
@@ -165,7 +203,9 @@
             </form>
 
 
-            <!-- FOOTER -->
+            <!-- ==================================================
+                 FOOTER
+            =================================================== -->
 
             <div class="login-footer">
 
@@ -179,504 +219,25 @@
 
             </div>
 
+
         </div>
 
     </div>
 
 
-    <!-- =========================================
-         FIREBASE + LOGIN SCRIPT
-    ========================================== -->
+    <!-- ==================================================
+         LOGIN JAVASCRIPT
+         
+         Firebase + Authentication + Role Redirect
+         is handled inside js/app.js
+    =================================================== -->
+
+    <script
+        type="module"
+        src="js/app.js"
+    ></script>
 
-    <script type="module">
-
-        import { initializeApp }
-            from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
-        import {
-            getAuth,
-            signInWithEmailAndPassword,
-            setPersistence,
-            browserLocalPersistence
-        }
-        from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
-        import {
-            getFirestore,
-            doc,
-            getDoc
-        }
-        from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-
-        // =========================================
-        // FIREBASE CONFIG
-        // =========================================
-
-        const firebaseConfig = {
-
-            apiKey: "AIzaSyAxVUihj9BhmR_0uyXJyQmD00eQ9mgq9M",
-
-            authDomain:
-                "attendix-rfid-attendance.firebaseapp.com",
-
-            projectId:
-                "attendix-rfid-attendance",
-
-            storageBucket:
-                "attendix-rfid-attendance.firebasestorage.app",
-
-            messagingSenderId:
-                "1038365817716",
-
-            appId:
-                "1:1038365817716:web:a1160a5265dfb417da8a21",
-
-            measurementId:
-                "G-ZYCH6VZHD0"
-        };
-
-
-        // =========================================
-        // INITIALIZE FIREBASE
-        // =========================================
-
-        const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
-        const db = getFirestore(app);
-
-
-        // =========================================
-        // ELEMENTS
-        // =========================================
-
-        const loginForm =
-            document.getElementById("loginForm");
-
-        const role =
-            document.getElementById("role");
-
-        const email =
-            document.getElementById("email");
-
-        const password =
-            document.getElementById("password");
-
-        const loginBtn =
-            document.getElementById("loginBtn");
-
-        const errorMessage =
-            document.getElementById("errorMessage");
-
-        const togglePassword =
-            document.getElementById("togglePassword");
-
-
-        // =========================================
-        // PASSWORD SHOW / HIDE
-        // =========================================
-
-        togglePassword.addEventListener(
-            "click",
-            () => {
-
-                if (password.type === "password") {
-
-                    password.type = "text";
-
-                    togglePassword.textContent = "🙈";
-
-                } else {
-
-                    password.type = "password";
-
-                    togglePassword.textContent = "👁";
-
-                }
-
-            }
-        );
-
-
-        // =========================================
-        // ERROR FUNCTION
-        // =========================================
-
-        function showError(message) {
-
-            errorMessage.textContent = message;
-
-            errorMessage.style.display = "block";
-
-        }
-
-
-        // =========================================
-        // HIDE ERROR
-        // =========================================
-
-        function hideError() {
-
-            errorMessage.textContent = "";
-
-            errorMessage.style.display = "none";
-
-        }
-
-
-        // =========================================
-        // FIREBASE AUTH PERSISTENCE
-        // =========================================
-
-        await setPersistence(
-            auth,
-            browserLocalPersistence
-        );
-
-
-        // =========================================
-        // LOGIN
-        // =========================================
-
-        loginForm.addEventListener(
-            "submit",
-            async (event) => {
-
-                event.preventDefault();
-
-                hideError();
-
-
-                const selectedRole =
-                    role.value.trim().toLowerCase();
-
-                const userEmail =
-                    email.value.trim();
-
-                const userPassword =
-                    password.value;
-
-
-                // =====================================
-                // VALIDATION
-                // =====================================
-
-                if (!selectedRole) {
-
-                    showError(
-                        "Please select your role."
-                    );
-
-                    return;
-                }
-
-
-                if (!userEmail) {
-
-                    showError(
-                        "Please enter your email."
-                    );
-
-                    return;
-                }
-
-
-                if (!userPassword) {
-
-                    showError(
-                        "Please enter your password."
-                    );
-
-                    return;
-                }
-
-
-                // =====================================
-                // LOADING STATE
-                // =====================================
-
-                loginBtn.disabled = true;
-
-                loginBtn.textContent = "Signing in...";
-
-
-                try {
-
-
-                    // =================================
-                    // FIREBASE LOGIN
-                    // =================================
-
-                    const userCredential =
-                        await signInWithEmailAndPassword(
-                            auth,
-                            userEmail,
-                            userPassword
-                        );
-
-
-                    const user =
-                        userCredential.user;
-
-
-                    console.log(
-                        "Firebase Login Successful:",
-                        user.uid
-                    );
-
-
-                    // =================================
-                    // GET USER DOCUMENT
-                    // =================================
-
-                    const userRef =
-                        doc(
-                            db,
-                            "users",
-                            user.uid
-                        );
-
-
-                    const userSnapshot =
-                        await getDoc(userRef);
-
-
-                    if (!userSnapshot.exists()) {
-
-                        throw new Error(
-                            "User profile not found in Firestore."
-                        );
-
-                    }
-
-
-                    const userData =
-                        userSnapshot.data();
-
-
-                    console.log(
-                        "Firestore User:",
-                        userData
-                    );
-
-
-                    // =================================
-                    // FIRESTORE ROLE
-                    // =================================
-
-                    const firestoreRole =
-                        String(
-                            userData.role || ""
-                        )
-                        .trim()
-                        .toLowerCase();
-
-
-                    if (!firestoreRole) {
-
-                        throw new Error(
-                            "Role is not assigned to this account."
-                        );
-
-                    }
-
-
-                    // =================================
-                    // CHECK SELECTED ROLE
-                    // =================================
-
-                    if (
-                        selectedRole !== firestoreRole
-                    ) {
-
-                        throw new Error(
-                            `Wrong role selected. This account is registered as ${firestoreRole}.`
-                        );
-
-                    }
-
-
-                    // =================================
-                    // ADMIN
-                    // =================================
-
-                    if (
-                        firestoreRole === "admin"
-                    ) {
-
-                        window.location.href =
-                            "pages/admin.html";
-
-                        return;
-
-                    }
-
-
-                    // =================================
-                    // TEACHER
-                    // =================================
-
-                    if (
-                        firestoreRole === "teacher"
-                    ) {
-
-                        window.location.href =
-                            "pages/teacher.html";
-
-                        return;
-
-                    }
-
-
-                    // =================================
-                    // STUDENT
-                    // =================================
-
-                    if (
-                        firestoreRole === "student"
-                    ) {
-
-
-                        // Student must have
-                        // student_id
-
-                        if (
-                            !userData.student_id
-                        ) {
-
-                            throw new Error(
-                                "Student ID is missing from your user profile."
-                            );
-
-                        }
-
-
-                        window.location.href =
-                            "pages/student-dashboard.html";
-
-                        return;
-
-                    }
-
-
-                    // =================================
-                    // UNKNOWN ROLE
-                    // =================================
-
-                    throw new Error(
-                        "Invalid user role."
-                    );
-
-
-                } catch (error) {
-
-                    console.error(
-                        "LOGIN ERROR:",
-                        error
-                    );
-
-
-                    let message =
-                        "Login failed. Please try again.";
-
-
-                    // Firebase errors
-
-                    if (
-                        error.code ===
-                        "auth/invalid-credential"
-                    ) {
-
-                        message =
-                            "Invalid email or password.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/invalid-email"
-                    ) {
-
-                        message =
-                            "Please enter a valid email address.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/user-not-found"
-                    ) {
-
-                        message =
-                            "No account found with this email.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/wrong-password"
-                    ) {
-
-                        message =
-                            "Incorrect password.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/too-many-requests"
-                    ) {
-
-                        message =
-                            "Too many login attempts. Please try again later.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/network-request-failed"
-                    ) {
-
-                        message =
-                            "Network error. Please check your internet connection.";
-
-                    }
-
-                    else if (
-                        error.code ===
-                        "auth/api-key-not-valid"
-                    ) {
-
-                        message =
-                            "Firebase API key is not valid. Check Firebase configuration.";
-
-                    }
-
-                    else if (error.message) {
-
-                        message =
-                            error.message;
-
-                    }
-
-
-                    showError(message);
-
-
-                    // Reset button
-
-                    loginBtn.disabled = false;
-
-                    loginBtn.textContent = "Login";
-
-                }
-
-            }
-        );
-
-    </script>
 
 </body>
+
 </html>
